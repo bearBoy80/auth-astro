@@ -2,7 +2,6 @@ declare module 'auth:config' {
 	const config: import('./src/config').FullAuthConfig
 	export default config
 }
-
 declare module 'auth-astro' {
 	const index: import('./index').Integration
 
@@ -13,3 +12,4 @@ declare module 'auth-astro' {
 	export default index
 	export { defineConfig, type FullAuthConfig, type AuthHook }
 }
+

@@ -1,6 +1,6 @@
-# Auth Astro D1
+# Auth Astro Cloudflare D1
 
-Auth Astro D1 is a fork of [auth-astro](https://github.com/nowaythatworked/auth-astro) that adds Cloudflare D1 database support and runtime configuration capabilities. It wraps the core of [Auth.js](https://authjs.dev/) into an Astro integration, which automatically adds the endpoints and handles everything else.
+Auth Astro Cloudflare D1 is a fork of [auth-astro](https://github.com/nowaythatworked/auth-astro) that adds Cloudflare D1 database support and runtime configuration capabilities. It wraps the core of [Auth.js](https://authjs.dev/) into an Astro integration, which automatically adds the endpoints and handles everything else.
 
 > [!NOTE]
 > This is a fork of the original [auth-astro](https://github.com/nowaythatworked/auth-astro) repository with additional features and fixes.
@@ -21,7 +21,7 @@ Original Repository: [nowaythatworked/auth-astro](https://github.com/nowaythatwo
 The easiest way to get started is adding this package using the astro cli. 
 
 ```bash
-npm run astro add auth-astro-d1
+npm run astro add auth-astro-cloudflare-d1
 ```
 This will install the package and required peer-dependencies and add the integration to your config.
 You can now jump to [configuration](#configuration)
@@ -29,7 +29,7 @@ You can now jump to [configuration](#configuration)
 Alternatively, you can install the required packages on your own.
 
 ```bash
-npm install auth-astro-d1@latest @auth/core@^0.18.6
+npm install auth-astro-cloudflare-d1@latest @auth/core@^0.18.6
 ```
 > [!NOTE]  
 > If you´re using `pnpm` you must also install cookie: `pnpm i cookie`
@@ -41,7 +41,7 @@ Create your [auth configuration](https://authjs.dev/getting-started/providers/oa
 ```ts title="auth.config.ts"
 // auth.config.ts
 import GitHub from '@auth/core/providers/github'
-import { defineConfig } from 'auth-astro'
+import { defineConfig } from 'auth-astro-cloudflare-d1'
 import { D1Adapter } from '@auth/d1-adapter'
 
 export default defineConfig({
@@ -167,7 +167,7 @@ The `signIn` and `signOut` methods can be imported dynamically in an inline scri
   <button id="logout">Logout</button>
 
   <script>
-    const { signIn, signOut } = await import("auth-astro/client")
+    const { signIn, signOut } = await import("auth-astro-cloudflare-d1/client")
     document.querySelector("#login").onclick = () => signIn("github")
     document.querySelector("#logout").onclick = () => signOut()
   </script>
@@ -176,11 +176,11 @@ The `signIn` and `signOut` methods can be imported dynamically in an inline scri
 ```
 ### With auth-astro's Components
 
-Alternatively, you can use the `SignIn` and `SignOut` button components provided by `auth-astro/components` importing them into your Astro [component's script](https://docs.astro.build/en/core-concepts/astro-components/#the-component-script) 
+Alternatively, you can use the `SignIn` and `SignOut` button components provided by `auth-astro-cloudflare-d1/components` importing them into your Astro [component's script](https://docs.astro.build/en/core-concepts/astro-components/#the-component-script) 
 
 ```jsx
 ---
-import { SignIn, SignOut } from 'auth-astro/components'
+import { SignIn, SignOut } from 'auth-astro-cloudflare-d1/components'
 ---
 <html>
   <body>
@@ -200,7 +200,7 @@ You can fetch the session in one of two ways. The `getSession` method can be use
 
 ```tsx title="src/pages/index.astro"
 ---
-import { getSession } from 'auth-astro/server';
+import { getSession } from 'auth-astro-cloudflare-d1/server';
 
 const session = await getSession(Astro.request)
 ---
@@ -217,7 +217,7 @@ Alternatively, you can use the `Auth` component to fetch the session using a ren
 ```tsx title="src/pages/index.astro"
 ---
 import type { Session } from '@auth/core/types';
-import { Auth, SignIn, SignOut } from 'auth-astro/components';
+import { Auth, SignIn, SignOut } from 'auth-astro-cloudflare-d1/components';
 ---
 <Auth>
   {(session: Session) => 
