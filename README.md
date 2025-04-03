@@ -1,16 +1,27 @@
-# Auth Astro
+# Auth Astro D1
 
-Auth Astro is the easiest way to add Authentication to your Astro Project. It wraps the core of [Auth.js](https://authjs.dev/) into an Astro integration, which automatically adds the endpoints and handles everything else.
+Auth Astro D1 is a fork of [auth-astro](https://github.com/nowaythatworked/auth-astro) that adds Cloudflare D1 database support and runtime configuration capabilities. It wraps the core of [Auth.js](https://authjs.dev/) into an Astro integration, which automatically adds the endpoints and handles everything else.
 
-#### Now supporting up to Astro 5
-(**disclaimer**: Please don't confuse this package with [astro-auth](https://github.com/astro-community/astro-auth))
+> [!NOTE]
+> This is a fork of the original [auth-astro](https://github.com/nowaythatworked/auth-astro) repository with additional features and fixes.
 
-# Installation
+## Fork Information
+
+This fork includes the following improvements:
+
+- Added runtime configuration support through hooks
+- Added Cloudflare D1 database support
+- Fixed type definitions for better TypeScript support
+- Added support for dynamic database adapters
+
+Original Repository: [nowaythatworked/auth-astro](https://github.com/nowaythatworked/auth-astro)
+
+## Installation
 
 The easiest way to get started is adding this package using the astro cli. 
 
 ```bash
-npm run astro add auth-astro
+npm run astro add auth-astro-d1
 ```
 This will install the package and required peer-dependencies and add the integration to your config.
 You can now jump to [configuration](#configuration)
@@ -18,13 +29,10 @@ You can now jump to [configuration](#configuration)
 Alternatively, you can install the required packages on your own.
 
 ```bash
-npm install auth-astro@latest @auth/core@^0.18.6
+npm install auth-astro-d1@latest @auth/core@^0.18.6
 ```
 > [!NOTE]  
 > If you´re using `pnpm` you must also install cookie: `pnpm i cookie`
-
-
-Next, you need to [add the integration to your astro config](https://docs.astro.build/en/guides/integrations-guide/#using-integrations) by importing it and listing it in the integrations array.
 
 ## Configuration
 
@@ -34,6 +42,7 @@ Create your [auth configuration](https://authjs.dev/getting-started/providers/oa
 // auth.config.ts
 import GitHub from '@auth/core/providers/github'
 import { defineConfig } from 'auth-astro'
+import { D1Adapter } from '@auth/d1-adapter'
 
 export default defineConfig({
 	providers: [
@@ -42,16 +51,70 @@ export default defineConfig({
 			clientSecret: import.meta.env.GITHUB_CLIENT_SECRET,
 		}),
 	],
+	// Add hook for runtime configuration
+	hook: async (config, context) => {
+		// Get D1 instance from context
+		const d1 = context.locals.DB
+		return {
+			...config,
+			adapter: D1Adapter(d1)
+		}
+	}
 })
 ```
 
-Some OAuth Providers request a callback URL be submitted alongside requesting a Client ID, and Client Secret. The callback URL used by the providers must be set to the following, unless you override the prefix field in the configuration:
+### Runtime Configuration
 
+This fork adds support for runtime configuration through hooks. The hook function receives the current configuration and the request context, allowing you to modify the configuration at runtime.
+
+```ts
+hook: async (config, context) => {
+	// Access request context
+	const { request, locals } = context
+	
+	// Modify configuration
+	return {
+		...config,
+		// Add your modifications here
+	}
+}
 ```
-[origin]/api/auth/callback/[provider]
 
-// example
-// http://localhost:4321/api/auth/callback/github
+### Cloudflare D1 Support
+
+To use Cloudflare D1 with this fork:
+
+1. Configure your Astro project to use the Cloudflare adapter:
+
+```ts
+// astro.config.mjs
+import { defineConfig } from 'astro/config'
+import cloudflare from '@astrojs/cloudflare'
+
+export default defineConfig({
+	output: 'server',
+	adapter: cloudflare({
+		runtime: {
+			mode: 'local',
+			type: 'pages',
+			bindings: {
+				DB: 'your-d1-database'
+			}
+		}
+	})
+})
+```
+
+2. Use the hook to configure the D1 adapter:
+
+```ts
+hook: async (config, context) => {
+	const d1 = context.locals.DB
+	return {
+		...config,
+		adapter: D1Adapter(d1)
+	}
+}
 ```
 
 ### Setup Environment Variables

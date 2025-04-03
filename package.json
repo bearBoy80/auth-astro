@@ -1,21 +1,33 @@
 {
-	"name": "auth-astro",
-	"description": "The easiest way to add authentication to your Astro project!",
+	"name": "auth-astro-d1",
+	"description": "The easiest way to add authentication to your Astro project with Cloudflare D1 support!",
 	"version": "4.2.0",
-	"main": "./index.ts",
-	"types": "module.d.ts",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist",
+		"README.md"
+	],
 	"engines": {
 		"node": ">=17.4"
 	},
 	"license": "MIT",
-	"repository": "https://github.com/nowaythatworked/auth-astro.git",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/bearBoy80/auth-astro.git"
+	},
 	"author": "nowaythatworked <jan.czekala99@web.de>",
 	"contributors": [
+		"nowaythatworked <jan.czekala99@web.de>",
 		"Otterlord <otterlord.dev@gmail.com>",
-		"tajkirkpatrick"
+		"bearboy80"
 	],
 	"scripts": {
-		"format": "prettier --config .prettierrc --ignore-path .prettierignore -w  ."
+		"format": "prettier --config .prettierrc --ignore-path .prettierignore -w  .",
+		"build": "tsup",
+		"dev": "tsup --watch",
+		"prepublishOnly": "npm run build"
 	},
 	"peerDependencies": {
 		"@auth/core": "^0.37.3",
@@ -29,6 +41,7 @@
 		"next-auth": "^4.24.10",
 		"prettier": "^2.8.6",
 		"prettier-plugin-astro": "^0.8.0",
+		"tsup": "^8.0.2",
 		"typescript": "^5.6.2"
 	},
 	"dependencies": {
@@ -47,7 +60,10 @@
 		"astro-auth",
 		"astro-integration",
 		"astro-component",
-		"withastro"
+		"withastro",
+		"cloudflare",
+		"d1",
+		"runtime-config"
 	],
-	"packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
+	"packageManager": "pnpm@8.15.4"
 }

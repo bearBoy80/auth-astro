@@ -41,13 +41,19 @@ const actions: AuthAction[] = [
 ]
 
 function AstroAuthHandler(prefix: string, options = authConfig) {
-	return async ({ cookies, request }: APIContext) => {
+	return async ({ cookies, request, locals }: APIContext) => {
 		const url = new URL(request.url)
 		const action = url.pathname.slice(prefix.length + 1).split('/')[0] as AuthAction
 
 		if (!actions.includes(action) || !url.pathname.startsWith(prefix + '/')) return
 
-		const res = await Auth(request, options)
+		// Apply hook if exists
+		let finalConfig = options
+		if (options.hook) {
+			finalConfig = await options.hook(options, { request, locals })
+		}
+
+		const res = await Auth(request, finalConfig)
 		if (['callback', 'signin', 'signout'].includes(action)) {
 			// Properly handle multiple Set-Cookie headers (they can't be concatenated in one)
 			const getSetCookie = res.headers.getSetCookie()
@@ -107,13 +113,22 @@ export function AstroAuth(options = authConfig) {
  * @param req The request object.
  * @returns The current session, or `null` if there is no session.
  */
-export async function getSession(req: Request, options = authConfig): Promise<Session | null> {
+export async function getSession(
+	context: APIContext,
+	options = authConfig
+): Promise<Session | null> {
 	// @ts-ignore
 	options.secret ??= import.meta.env.AUTH_SECRET
 	options.trustHost ??= true
 
-	const url = new URL(`${options.prefix}/session`, req.url)
-	const response = await Auth(new Request(url, { headers: req.headers }), options)
+	// Apply hook if exists
+	let finalConfig = options
+	if (options.hook) {
+		finalConfig = await options.hook(options, { request: context.request, locals: context.locals })
+	}
+
+	const url = new URL(`${finalConfig.prefix}/session`, context.request.url)
+	const response = await Auth(new Request(url, { headers: context.request.headers }), finalConfig)
 	const { status = 200 } = response
 
 	const data = await response.json()

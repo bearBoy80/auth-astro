@@ -37,7 +37,18 @@ export interface AstroAuthConfig {
 	configFile?: string
 }
 
-export interface FullAuthConfig extends AstroAuthConfig, Omit<AuthConfig, 'raw'> {}
+export type AuthHook = (
+	config: FullAuthConfig,
+	context: any
+) => Promise<FullAuthConfig> | FullAuthConfig
+
+export interface FullAuthConfig extends AstroAuthConfig, Omit<AuthConfig, 'raw'> {
+	/**
+	 * Hook function to modify the config at runtime
+	 */
+	hook?: AuthHook
+}
+
 export const defineConfig = (config: FullAuthConfig) => {
 	config.prefix ??= '/api/auth'
 	config.basePath = config.prefix
