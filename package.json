@@ -8,8 +8,8 @@
 		"node": ">=17.4"
 	},
 	"license": "MIT",
-	"repository": "https://github.com/nowaythatworked/auth-astro.git",
-	"author": "nowaythatworked <jan.czekala99@web.de>",
+	"repository": "https://github.com/bearBoy80/auth-astro.git",
+	"author": "nowaythatworked",
 	"contributors": [
 		"Otterlord <otterlord.dev@gmail.com>",
 		"tajkirkpatrick",
